@@ -1,0 +1,38 @@
+{
+  "name": "ipyparallel-auto",
+  "displayName": "ipyparallel_auto",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ipyparallel-auto.enableRewriting",
+        "title": "IPyParallelAuto: Enable Rewriting Cells"
+      },
+      {
+        "command": "ipyparallel-auto.disableRewriting",
+        "title": "IPyParallelAuto: Disable Rewriting Cells"
+      },
+      {
+        "command": "ipyparallel-auto.removeHeadings",
+        "title": "IPyParallelAuto: Clean (undo) Notebook"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.70.0"
+  }
+}
