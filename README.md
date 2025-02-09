@@ -19,10 +19,15 @@ Three commands are provided:
   - Removes all `%%px` or `%px` from the cell headers
 
 #### `IPyParallelAuto: Restart Cluster`
-  - Nominally tries to restart the cluster
+Nominally tries to restart the cluster
+  - Restarts the jupyter kernel of the notebook
   - Runs a specified arbitrary command
   - Set VSCode User Settings: `"ipyparallel-auto.clusterRestartCommand": "your_command"`;
   - For example
       ```
       "ipyparallel-auto.clusterRestartCommand": "pkill ipengine; pkill ipcontroller; screen -S controller -d -m ipcontroller; screen -S engine -d -m ipengine"
+      ```
+      OR
+      ```
+      "ipyparallel-auto.clusterRestartCommand": "bash /home/username/cluster_restart.sh"
       ```

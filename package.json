@@ -6,12 +6,16 @@
   "engines": {
     "vscode": "^1.70.0"
   },
+  "publisher": "rdyro",
   "categories": [
     "Other"
   ],
   "activationEvents": [
     "onStartupFinished"
   ],
+  "dependencies": {
+    "ms-toolsai.jupyter": "*"
+  },
   "main": "./extension.js",
   "contributes": {
     "commands": [

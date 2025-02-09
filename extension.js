@@ -35,7 +35,21 @@ function activate(context) {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('ipyparallel-auto.restartCluster', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('ipyparallel-auto.restartCluster', async () => {
+		// check if the current context is a notebook
+		if (vscode.window.activeNotebookEditor === undefined) return;
+
+		// restart the current jupyter notebook kernel
+		const restart_commands = (await vscode.commands.getCommands(true))
+			.filter((item) => item.match(/jupyter.restartkernel/i)).sort();
+		if (restart_commands.length > 0) {
+			vscode.window.showInformationMessage("Restarting kernel...");
+			await vscode.commands.executeCommand(restart_commands[0]);
+		} else {
+			vscode.window.showInformationMessage("No restart kernel command found.");
+		}
+
+		// run the restart bash command
 		const config = vscode.workspace.getConfiguration("ipyparallel-auto");
 		const cmd = config.clusterRestartCommand;
 		if (cmd === undefined || cmd === "") return;
@@ -60,7 +74,7 @@ function activate(context) {
 			// disable this for now
 			//if (text == _CELL_CHANGES_MAP[cell_idx]) continue;
 
-			if (!_header_matches(text) && !text.match(/^#(.*?)$/s) 
+			if (!_header_matches(text) && !text.match(/^#(.*?)$/s)
 				&& text.indexOf("ipyparallel") === -1) {
 
 				const edit = new vscode.WorkspaceEdit();
