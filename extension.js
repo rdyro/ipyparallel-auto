@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const { exec } = require('child_process');
 
 function activate(context) {
 	var _ENABLE_REWRITING = false;
@@ -32,7 +33,16 @@ function activate(context) {
 				const success = vscode.workspace.applyEdit(edit);
 			}
 		}
+	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('ipyparallel-auto.restartCluster', () => {
+		const config = vscode.workspace.getConfiguration("ipyparallel-auto");
+		const cmd = config.clusterRestartCommand;
+		if (cmd === undefined || cmd === "") return;
+		vscode.window.showInformationMessage("Restarting cluster: `" + cmd + "`");
+		exec(cmd, (error, stdout, stderr) => {
+			if (error) vscode.window.showInformationMessage("Error running restart command.")
+		});
 	}));
 
 	setInterval(() => {
@@ -46,7 +56,9 @@ function activate(context) {
 			if (cell.kind != vscode.NotebookCellKind.Code) continue;
 
 			const text = cell.document.getText();
-			if (text == _CELL_CHANGES_MAP[cell_idx]) continue;
+
+			// disable this for now
+			//if (text == _CELL_CHANGES_MAP[cell_idx]) continue;
 
 			if (!_header_matches(text) && !text.match(/^#(.*?)$/s) 
 				&& text.indexOf("ipyparallel") === -1) {
@@ -54,7 +66,8 @@ function activate(context) {
 				const edit = new vscode.WorkspaceEdit();
 				edit.insert(cell.document.uri, cell.document.positionAt(0), "%%px --local\n");
 				const success = vscode.workspace.applyEdit(edit);
-				_CELL_CHANGES_MAP[cell_idx] = cell.document.getText();
+				// disable this for now
+				// _CELL_CHANGES_MAP[cell_idx] = cell.document.getText();
 			}
 		}
 	}, 100);

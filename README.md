@@ -17,3 +17,12 @@ Three commands are provided:
 
 #### `IPyParallelAuto: Clean (undo) Notebook`
   - Removes all `%%px` or `%px` from the cell headers
+
+#### `IPyParallelAuto: Restart Cluster`
+  - Nominally tries to restart the cluster
+  - Runs a specified arbitrary command
+  - Set VSCode User Settings: `"ipyparallel-auto.clusterRestartCommand": "your_command"`;
+  - For example
+      ```
+      "ipyparallel-auto.clusterRestartCommand": "pkill ipengine; pkill ipcontroller; screen -S controller -d -m ipcontroller; screen -S engine -d -m ipengine"
+      ```
