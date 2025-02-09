@@ -1,8 +1,17 @@
-# IPyParallelAuto
+# IPyParallel-Auto
 
-VsCode extension to automatically rewrite notebook cells to start with `%%px --local`.
+VSCode extension to automatically rewrite notebook cells to start with `%%px
+--local` (or similar) for
+[ipyparallel](https://ipyparallel.readthedocs.io/en/latest/).
 
-Three commands are provided:
+<img src="https://github.com/rdyro/ipyparallel-auto/blob/main/images/demo.png?raw=true" width="100%" />
+
+*Note: This extension is not affiliated with the excellent IPython or
+[ipyparallel](https://ipyparallel.readthedocs.io/en/latest/) projects.*
+
+---
+
+Commands provided:
 
 #### `IPyParallelAuto: Enable Rewriting Cells`
   - This command will rewrite all code cells in the notebook to start with `%%px --local`
@@ -31,3 +40,18 @@ Nominally tries to restart the cluster
       ```
       "ipyparallel-auto.clusterRestartCommand": "bash /home/username/cluster_restart.sh"
       ```
+
+## Settings
+
+Available settings:
+```
+{
+  ...
+  "ipyparallel-auto.cellHeader": "Cell header (e.g., `%%px`, `%%px --local`, `%%px --target 1`, etc.)",
+  "ipyparallel-auto.clusterRestartCommand": "Restart cluster command to run (e.g. `bash ./restart.sh`)"
+  ...
+}
+```
+You can find them in VSCode settings by filtering for
+`@ext:rdyro.ipyparallel-auto` or by adding the setting fields directly in the
+settings.json file.

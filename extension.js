@@ -3,15 +3,24 @@ const { exec } = require('child_process');
 
 function activate(context) {
 	var _ENABLE_REWRITING = false;
-	var _CELL_CHANGES_MAP = {};
 
 	function _header_matches(text) {
-		return text.match(/^%%px(.*?)$/s) !== null || text.match(/^%px(.*?)$/s) !== null;
+		return text !== null && (text.match(/^%%px(.*?)$/s) !== null
+			|| text.match(/^%px(.*?)$/s) !== null);
+	}
+
+	function _get_cell_header() {
+		const config = vscode.workspace.getConfiguration("ipyparallel-auto") ?? {};
+		const cell_header = (config.cellHeader ?? "%%px --local").trim();
+		if (!_header_matches(cell_header)) {
+			vscode.window.showErrorMessage("Invalid cell header: `" + cell_header + "`");
+			return null;
+		}
+		return cell_header;
 	}
 
 	context.subscriptions.push(vscode.commands.registerCommand('ipyparallel-auto.enableRewriting', () => {
 		_ENABLE_REWRITING = true;
-		_CELL_CHANGES_MAP = {};
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('ipyparallel-auto.disableRewriting', () => {
@@ -65,23 +74,31 @@ function activate(context) {
 		const document = vscode.window.activeNotebookEditor.notebook;
 		if (document === undefined) return;
 		const cell_count = vscode.window.activeNotebookEditor.notebook.getCells().length;
+
+		// get cell_header, if invalid disable rewriting and return
+		const cell_header = _get_cell_header();
+		if (cell_header === null) {
+			_ENABLE_REWRITING = false;
+			return;
+		}
+
+		// go through each cell and add a header if it doesn't have one
 		for (var cell_idx = 0; cell_idx < cell_count; cell_idx++) {
 			const cell = document.cellAt(cell_idx);
 			if (cell.kind != vscode.NotebookCellKind.Code) continue;
 
 			const text = cell.document.getText();
 
-			// disable this for now
-			//if (text == _CELL_CHANGES_MAP[cell_idx]) continue;
-
+			// only rewrite if the cell doesn't have a header and doesn't start with a comment
+			// or contains `ipyparallel` in its body
 			if (!_header_matches(text) && !text.match(/^#(.*?)$/s)
 				&& text.indexOf("ipyparallel") === -1) {
 
 				const edit = new vscode.WorkspaceEdit();
-				edit.insert(cell.document.uri, cell.document.positionAt(0), "%%px --local\n");
+				const header_to_add = cell_header + "\n";
+				if (text.startsWith(header_to_add)) continue;
+				edit.insert(cell.document.uri, cell.document.positionAt(0), header_to_add);
 				const success = vscode.workspace.applyEdit(edit);
-				// disable this for now
-				// _CELL_CHANGES_MAP[cell_idx] = cell.document.getText();
 			}
 		}
 	}, 100);

@@ -1,8 +1,9 @@
 {
   "name": "ipyparallel-auto",
-  "displayName": "ipyparallel_auto",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "ipyparallel-auto",
+  "description": "Rewrite notebook cells with `%%px --local` (or similar) for [ipyparallel](https://ipyparallel.readthedocs.io/en/latest/).",
+  "icon": "images/rdyro-logo.png",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -13,10 +14,11 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "dependencies": {
-    "ms-toolsai.jupyter": "*"
-  },
   "main": "./extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rdyro/ipyparallel-auto"
+  },
   "contributes": {
     "commands": [
       {
@@ -39,10 +41,15 @@
     "configuration": {
       "title": "IPyParallelAuto",
       "properties": {
+        "ipyparallel-auto.cellHeader": {
+          "type": "string",
+          "default": "%%px --local",
+          "description": "Cell header (e.g., `%%px`, `%%px --local`, `%%px --target 1`, etc.)"
+        },
         "ipyparallel-auto.clusterRestartCommand": {
           "type": "string",
           "default": "",
-          "description": "Restart cluster command to run."
+          "description": "Restart cluster command to run (e.g. `bash ./restart.sh`)"
         }
       }
     }
